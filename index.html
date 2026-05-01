@@ -3,207 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BP Debate Team Check-In</title>
+    <title>BP Debate Team Platform</title>
     <style>
         :root {
-            --primary: #ff6719; /* Substack orange for brand consistency */
-            --primary-hover: #e55c16;
+            --primary: #990000; /* USC Trojan Cardinal */
+            --primary-hover: #7a0000;
+            --gold: #FFCC00; /* USC Gold */
             --bg: #f8f9fa;
             --surface: #ffffff;
             --text: #212529;
             --border: #dee2e6;
         }
         
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background: var(--bg); 
-            color: var(--text);
-            padding: 2rem 1rem;
-            line-height: 1.5;
-            margin: 0;
-        }
-
-        .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            background: var(--surface); 
-            padding: 2rem; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-        }
-
-        h2 { 
-            text-align: center; 
-            margin-top: 0; 
-            color: var(--primary); 
-            font-size: 1.75rem;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 2rem 1rem; line-height: 1.5; margin: 0; }
+        .container { max-width: 600px; margin: 0 auto; background: var(--surface); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        h2 { text-align: center; color: var(--primary); font-size: 1.75rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        h3 { color: var(--primary); }
         .form-group { margin-bottom: 1.5rem; }
-        
-        label { 
-            display: block; 
-            margin-bottom: 0.5rem; 
-            font-weight: 600; 
-            color: #495057;
-        }
-
-        input[type="text"], select { 
-            width: 100%; 
-            padding: 0.75rem; 
-            box-sizing: border-box; 
-            border: 1px solid var(--border); 
-            border-radius: 6px; 
-            font-size: 1rem;
-            transition: border-color 0.15s ease-in-out;
-        }
-
-        input[type="text"]:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255, 103, 25, 0.2);
-        }
-
-        button { 
-            width: 100%; 
-            padding: 0.875rem; 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            font-size: 1.1rem; 
-            font-weight: 600;
-            cursor: pointer; 
-            transition: background-color 0.2s;
-        }
-
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        input[type="text"], input[type="password"], select, textarea { width: 100%; padding: 0.75rem; box-sizing: border-box; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
+        textarea { resize: vertical; min-height: 100px; }
+        button { width: 100%; padding: 0.875rem; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-bottom: 0.5rem;}
         button:hover { background: var(--primary-hover); }
-
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
         .hidden { display: none !important; }
-        
-        #message { 
-            margin-bottom: 1.5rem; 
-            text-align: center; 
-            font-weight: 600; 
-            min-height: 24px; 
-            border-radius: 6px;
-            padding: 0.5rem;
-        }
-
-        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-
-        /* Admin Section Styling */
-        .admin-panel { 
-            margin-top: 3rem; 
-            padding: 1.5rem; 
-            border: 1px solid var(--border); 
-            background: #fdfdfe;
-            border-radius: 8px;
-        }
-        
-        .admin-panel h3 { margin-top: 0; color: #495057; }
-        
-        #rosterList { 
-            list-style-type: none; 
-            padding: 0; 
-        }
-        
-        #rosterList li { 
-            background: white;
-            border: 1px solid var(--border);
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            border-radius: 4px;
-        }
-        
-        .role-badge {
-            display: inline-block;
-            padding: 0.25em 0.4em;
-            font-size: 75%;
-            font-weight: 700;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            border-radius: 0.25rem;
-            margin-left: 0.5rem;
-            color: white;
-        }
-        
-        .badge-debater { background-color: #007bff; }
-        .badge-judge { background-color: #28a745; }
-        .badge-spectator { background-color: #6c757d; }
+        #message { margin-bottom: 1.5rem; text-align: center; font-weight: 600; padding: 0.5rem; border-radius: 6px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        #roundDisplayArea { background: #fff3cd; border: 1px solid #ffeeba; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; }
+        #adminPanel { border: 2px solid var(--gold); padding: 1.5rem; background: #fffbdf; border-radius: 8px; margin-top: 1rem; }
+        .admin-footer { text-align: center; margin-top: 2rem; font-size: 0.85rem; }
+        .admin-footer a { color: #6c757d; text-decoration: underline; cursor: pointer; }
+        ul { padding-left: 0; list-style-type: none;}
+        li { background: white; border: 1px solid var(--border); padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 4px;}
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Debate Team Check-In</h2>
+        <h2>Debate Check-In</h2>
         <div id="message" class="hidden"></div>
 
-        <form id="checkInForm">
-            <div class="form-group">
-                <label for="roomCode">Attendance Code</label>
-                <input type="text" id="roomCode" required placeholder="e.g., THBT-123">
-            </div>
+        <div id="roundDisplayArea" class="hidden">
+            <h3>📢 The Draw</h3>
+            <div id="roundContent" style="white-space: pre-wrap; font-weight: 600;"></div>
+        </div>
+
+        <div id="userSection">
+            <form id="checkInForm">
+                <div class="form-group">
+                    <label for="roomCode">Attendance Code</label>
+                    <input type="text" id="roomCode" required placeholder="Enter today's code">
+                </div>
+                <div class="form-group">
+                    <label for="playerName">Your Name</label>
+                    <select id="playerName" required>
+                        <option value="">-- Select Your Name --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role for this Round</label>
+                    <select id="role" required>
+                        <option value="">-- Select --</option>
+                        <option value="debater">Debater</option>
+                        <option value="judge">Judge</option>
+                        <option value="spectator">Spectator</option>
+                    </select>
+                </div>
+                <div id="partnerSection" class="form-group hidden">
+                    <label for="partnerStatus">Partner Status</label>
+                    <select id="partnerStatus">
+                        <option value="need_partner">I need a partner / Ironperson</option>
+                        <option value="have_partner">I have a partner</option>
+                    </select>
+                </div>
+                <div id="partnerNameSection" class="form-group hidden">
+                    <label for="partnerName">Partner's Name</label>
+                    <select id="partnerName">
+                        <option value="">-- Select Partner --</option>
+                    </select>
+                </div>
+                <button type="submit">Submit Check-In</button>
+            </form>
+        </div>
+
+        <div id="adminPanel" class="hidden">
+            <h3>Admin Dashboard</h3>
+            <button id="logoutBtn" class="btn-secondary" style="margin-bottom: 1.5rem;">Exit Admin</button>
             
             <div class="form-group">
-                <label for="playerName">Full Name</label>
-                <input type="text" id="playerName" required placeholder="Jane Doe">
+                <label for="adminCode">Set Active Check-in Code:</label>
+                <input type="text" id="adminCode">
+                <button type="button" id="updateCodeBtn" style="margin-top: 10px;">Update Live Code</button>
             </div>
-            
+            <hr style="border:1px solid #dee2e6; margin: 1.5rem 0;">
             <div class="form-group">
-                <label for="role">Role for this Round</label>
-                <select id="role" required>
-                    <option value="">-- Select --</option>
-                    <option value="debater">Debater</option>
-                    <option value="judge">Judge</option>
-                    <option value="spectator">Spectator</option>
-                </select>
+                <label for="roundSetup">Configure Round / Draw:</label>
+                <textarea id="roundSetup" placeholder="Type the draw here..."></textarea>
+                <button type="button" id="launchRoundBtn">Launch Round to All Phones</button>
+                <button type="button" id="hideRoundBtn" class="btn-secondary">Hide Round</button>
             </div>
-
-            <div id="partnerSection" class="form-group hidden">
-                <label for="partnerStatus">Partner Status</label>
-                <select id="partnerStatus">
-                    <option value="need_partner">I need a partner / Ironperson</option>
-                    <option value="have_partner">I have a partner</option>
-                </select>
-            </div>
-            
-            <div id="partnerNameSection" class="form-group hidden">
-                <label for="partnerName">Partner's Full Name</label>
-                <input type="text" id="partnerName" placeholder="John Smith">
-            </div>
-
-            <button type="submit">Submit Check-In</button>
-        </form>
-
-        <div class="admin-panel">
-            <h3>Admin Settings (Local Only)</h3>
-            <div class="form-group">
-                <label for="adminCode">Set Active Code:</label>
-                <input type="text" id="adminCode" value="TEST-CODE">
-                <button type="button" id="setCodeBtn" style="margin-top: 10px; background: #6c757d;">Update Code</button>
-            </div>
+            <hr style="border:1px solid #dee2e6; margin: 1.5rem 0;">
             <h4>Live Roster:</h4>
+            <button type="button" id="clearRosterBtn" class="btn-danger" style="font-size: 0.9rem; padding: 0.5rem;">Clear Entire Roster</button>
             <ul id="rosterList"></ul>
+        </div>
+
+        <div class="admin-footer">
+            <a id="adminLoginLink">Admin Access</a>
         </div>
     </div>
 
-    <script>
-        let currentValidCode = "TEST-CODE";
-        let roster = [];
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        const form = document.getElementById('checkInForm');
+        const firebaseConfig = {
+  apiKey: "AIzaSyDWzZZjy3O1KdxUl11wlE2ZuJf73SQi4ug",
+  authDomain: "trojandocs-fe27b.firebaseapp.com",
+  databaseURL: "https://trojandocs-fe27b-default-rtdb.firebaseio.com",
+  projectId: "trojandocs-fe27b",
+  storageBucket: "trojandocs-fe27b.firebasestorage.app",
+  messagingSenderId: "440883306804",
+  appId: "1:440883306804:web:e3ab975311417f59f18561"
+};
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- DATA & CONFIG ---
+        const ADMIN_PASSWORD = "tdsadmin";
+        let currentValidCode = "TDS-FRIDAY"; // Default fallback
+        
+        // ADD YOUR TEAM ROSTER HERE
+        const teamMembers = [
+            "Alice Smith", "Bob Jones", "Charlie Davis", "Diana Prince",
+            "Evan Wright", "Fiona Gallagher", "George Mason", "Hannah Abbott"
+        ];
+
+        // --- DOM ELEMENTS ---
+        const userSection = document.getElementById('userSection');
+        const adminPanel = document.getElementById('adminPanel');
+        const checkInForm = document.getElementById('checkInForm');
         const roleSelect = document.getElementById('role');
         const partnerSection = document.getElementById('partnerSection');
         const partnerStatus = document.getElementById('partnerStatus');
         const partnerNameSection = document.getElementById('partnerNameSection');
         const messageDiv = document.getElementById('message');
         const rosterList = document.getElementById('rosterList');
+        const playerNameSelect = document.getElementById('playerName');
+        const partnerNameSelect = document.getElementById('partnerName');
+        const roundDisplayArea = document.getElementById('roundDisplayArea');
+        const roundContent = document.getElementById('roundContent');
+
+        // Populate dropdowns
+        teamMembers.sort().forEach(name => {
+            playerNameSelect.add(new Option(name, name));
+            partnerNameSelect.add(new Option(name, name));
+        });
 
         function showMessage(text, isError) {
             messageDiv.textContent = text;
@@ -212,11 +182,78 @@
             setTimeout(() => { messageDiv.classList.add('hidden'); }, 3000);
         }
 
-        document.getElementById('setCodeBtn').addEventListener('click', () => {
-            currentValidCode = document.getElementById('adminCode').value;
-            alert('Code set to: ' + currentValidCode);
+        // --- ADMIN LOGIN ---
+        document.getElementById('adminLoginLink').addEventListener('click', () => {
+            if (prompt("Enter Admin Password:") === ADMIN_PASSWORD) {
+                userSection.classList.add('hidden');
+                adminPanel.classList.remove('hidden');
+            } else { alert("Incorrect password."); }
+        });
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            adminPanel.classList.add('hidden');
+            userSection.classList.remove('hidden');
         });
 
+        // --- REAL-TIME DATABASE LISTENERS ---
+
+        // 1. Listen for the active attendance code
+        onValue(ref(db, 'settings/code'), (snapshot) => {
+            if(snapshot.exists()) {
+                currentValidCode = snapshot.val();
+                document.getElementById('adminCode').value = currentValidCode;
+            }
+        });
+
+        // 2. Listen for the Draw/Round
+        onValue(ref(db, 'settings/draw'), (snapshot) => {
+            if(snapshot.exists() && snapshot.val() !== "") {
+                roundContent.textContent = snapshot.val();
+                roundDisplayArea.classList.remove('hidden');
+                document.getElementById('roundSetup').value = snapshot.val();
+            } else {
+                roundDisplayArea.classList.add('hidden');
+                roundContent.textContent = "";
+                document.getElementById('roundSetup').value = "";
+            }
+        });
+
+        // 3. Listen for Roster Updates
+        onValue(ref(db, 'roster'), (snapshot) => {
+            rosterList.innerHTML = ''; // clear current list
+            if(snapshot.exists()) {
+                const data = snapshot.val();
+                for (let key in data) {
+                    const entry = data[key];
+                    const li = document.createElement('li');
+                    li.innerHTML = `<strong>${entry.name}</strong> - ${entry.role.toUpperCase()}` + 
+                                   (entry.partner ? ` <em>(Partner: ${entry.partner})</em>` : '');
+                    rosterList.appendChild(li);
+                }
+            }
+        });
+
+        // --- ADMIN ACTIONS (Writing to Database) ---
+        document.getElementById('updateCodeBtn').addEventListener('click', () => {
+            const newCode = document.getElementById('adminCode').value;
+            set(ref(db, 'settings/code'), newCode).then(() => alert("Live code updated for all users!"));
+        });
+
+        document.getElementById('launchRoundBtn').addEventListener('click', () => {
+            const drawText = document.getElementById('roundSetup').value;
+            set(ref(db, 'settings/draw'), drawText).then(() => alert("Draw launched to all phones!"));
+        });
+
+        document.getElementById('hideRoundBtn').addEventListener('click', () => {
+            set(ref(db, 'settings/draw'), null);
+        });
+
+        document.getElementById('clearRosterBtn').addEventListener('click', () => {
+            if(confirm("Are you sure you want to clear the entire check-in roster?")) {
+                remove(ref(db, 'roster'));
+            }
+        });
+
+        // --- USER FORM LOGIC ---
         roleSelect.addEventListener('change', (e) => {
             if (e.target.value === 'debater') {
                 partnerSection.classList.remove('hidden');
@@ -232,55 +269,40 @@
                 partnerNameSection.classList.remove('hidden');
             } else {
                 partnerNameSection.classList.add('hidden');
-                document.getElementById('partnerName').value = '';
+                partnerNameSelect.value = '';
             }
         });
 
-        form.addEventListener('submit', (e) => {
+        checkInForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            const enteredCode = document.getElementById('roomCode').value;
-            
-            if (enteredCode !== currentValidCode) {
-                showMessage("Invalid attendance code.", true);
+            if (document.getElementById('roomCode').value !== currentValidCode) {
+                showMessage("Invalid attendance code. Please check the screen at the front of the room.", true);
                 return;
             }
 
-            const entry = {
-                name: document.getElementById('playerName').value,
+            const name = playerNameSelect.value;
+            const partner = partnerNameSelect.value;
+
+            if (name === partner && partner !== "") {
+                showMessage("You cannot be your own partner!", true);
+                return;
+            }
+
+            // Push to Firebase instead of local array
+            push(ref(db, 'roster'), {
+                name: name,
                 role: roleSelect.value,
-                partner: document.getElementById('partnerName').value || null
-            };
-
-            roster.push(entry);
-            updateRosterDisplay();
-
-            showMessage("Checked in successfully!", false);
-            form.reset();
-            partnerSection.classList.add('hidden');
-            partnerNameSection.classList.add('hidden');
-        });
-
-        function updateRosterDisplay() {
-            rosterList.innerHTML = '';
-            roster.forEach(person => {
-                const li = document.createElement('li');
-                
-                let html = `<strong>${person.name}</strong> `;
-                html += `<span class="role-badge badge-${person.role}">${person.role.toUpperCase()}</span>`;
-                
-                if (person.role === 'debater') {
-                    if (person.partner) {
-                        html += `<br><small style="color: #6c757d;">Partner: ${person.partner}</small>`;
-                    } else {
-                        html += `<br><small style="color: #dc3545;">Needs Partner</small>`;
-                    }
-                }
-                
-                li.innerHTML = html;
-                rosterList.appendChild(li);
+                partner: partner || null
+            }).then(() => {
+                showMessage("Checked in successfully!", false);
+                checkInForm.reset();
+                partnerSection.classList.add('hidden');
+                partnerNameSection.classList.add('hidden');
+            }).catch((error) => {
+                showMessage("Error checking in. Please check your internet connection.", true);
             });
-        }
+        });
     </script>
 </body>
 </html>
