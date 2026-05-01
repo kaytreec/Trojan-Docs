@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BP Debate Team Check-In</title>
+    <style>
+        :root {
+            --primary: #ff6719; /* Substack orange for brand consistency */
+            --primary-hover: #e55c16;
+            --bg: #f8f9fa;
+            --surface: #ffffff;
+            --text: #212529;
+            --border: #dee2e6;
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background: var(--bg); 
+            color: var(--text);
+            padding: 2rem 1rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: var(--surface); 
+            padding: 2rem; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+        }
+
+        h2 { 
+            text-align: center; 
+            margin-top: 0; 
+            color: var(--primary); 
+            font-size: 1.75rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+        
+        label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            font-weight: 600; 
+            color: #495057;
+        }
+
+        input[type="text"], select { 
+            width: 100%; 
+            padding: 0.75rem; 
+            box-sizing: border-box; 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            font-size: 1rem;
+            transition: border-color 0.15s ease-in-out;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 103, 25, 0.2);
+        }
+
+        button { 
+            width: 100%; 
+            padding: 0.875rem; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            font-size: 1.1rem; 
+            font-weight: 600;
+            cursor: pointer; 
+            transition: background-color 0.2s;
+        }
+
+        button:hover { background: var(--primary-hover); }
+
+        .hidden { display: none !important; }
+        
+        #message { 
+            margin-bottom: 1.5rem; 
+            text-align: center; 
+            font-weight: 600; 
+            min-height: 24px; 
+            border-radius: 6px;
+            padding: 0.5rem;
+        }
+
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* Admin Section Styling */
+        .admin-panel { 
+            margin-top: 3rem; 
+            padding: 1.5rem; 
+            border: 1px solid var(--border); 
+            background: #fdfdfe;
+            border-radius: 8px;
+        }
+        
+        .admin-panel h3 { margin-top: 0; color: #495057; }
+        
+        #rosterList { 
+            list-style-type: none; 
+            padding: 0; 
+        }
+        
+        #rosterList li { 
+            background: white;
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 0.25em 0.4em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+            margin-left: 0.5rem;
+            color: white;
+        }
+        
+        .badge-debater { background-color: #007bff; }
+        .badge-judge { background-color: #28a745; }
+        .badge-spectator { background-color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Debate Team Check-In</h2>
+        <div id="message" class="hidden"></div>
+
+        <form id="checkInForm">
+            <div class="form-group">
+                <label for="roomCode">Attendance Code</label>
+                <input type="text" id="roomCode" required placeholder="e.g., THBT-123">
+            </div>
+            
+            <div class="form-group">
+                <label for="playerName">Full Name</label>
+                <input type="text" id="playerName" required placeholder="Jane Doe">
+            </div>
+            
+            <div class="form-group">
+                <label for="role">Role for this Round</label>
+                <select id="role" required>
+                    <option value="">-- Select --</option>
+                    <option value="debater">Debater</option>
+                    <option value="judge">Judge</option>
+                    <option value="spectator">Spectator</option>
+                </select>
+            </div>
+
+            <div id="partnerSection" class="form-group hidden">
+                <label for="partnerStatus">Partner Status</label>
+                <select id="partnerStatus">
+                    <option value="need_partner">I need a partner / Ironperson</option>
+                    <option value="have_partner">I have a partner</option>
+                </select>
+            </div>
+            
+            <div id="partnerNameSection" class="form-group hidden">
+                <label for="partnerName">Partner's Full Name</label>
+                <input type="text" id="partnerName" placeholder="John Smith">
+            </div>
+
+            <button type="submit">Submit Check-In</button>
+        </form>
+
+        <div class="admin-panel">
+            <h3>Admin Settings (Local Only)</h3>
+            <div class="form-group">
+                <label for="adminCode">Set Active Code:</label>
+                <input type="text" id="adminCode" value="TEST-CODE">
+                <button type="button" id="setCodeBtn" style="margin-top: 10px; background: #6c757d;">Update Code</button>
+            </div>
+            <h4>Live Roster:</h4>
+            <ul id="rosterList"></ul>
+        </div>
+    </div>
+
+    <script>
+        let currentValidCode = "TEST-CODE";
+        let roster = [];
+
+        const form = document.getElementById('checkInForm');
+        const roleSelect = document.getElementById('role');
+        const partnerSection = document.getElementById('partnerSection');
+        const partnerStatus = document.getElementById('partnerStatus');
+        const partnerNameSection = document.getElementById('partnerNameSection');
+        const messageDiv = document.getElementById('message');
+        const rosterList = document.getElementById('rosterList');
+
+        function showMessage(text, isError) {
+            messageDiv.textContent = text;
+            messageDiv.className = isError ? 'error' : 'success';
+            messageDiv.classList.remove('hidden');
+            setTimeout(() => { messageDiv.classList.add('hidden'); }, 3000);
+        }
+
+        document.getElementById('setCodeBtn').addEventListener('click', () => {
+            currentValidCode = document.getElementById('adminCode').value;
+            alert('Code set to: ' + currentValidCode);
+        });
+
+        roleSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'debater') {
+                partnerSection.classList.remove('hidden');
+            } else {
+                partnerSection.classList.add('hidden');
+                partnerNameSection.classList.add('hidden');
+                partnerStatus.value = "need_partner";
+            }
+        });
+
+        partnerStatus.addEventListener('change', (e) => {
+            if (e.target.value === 'have_partner') {
+                partnerNameSection.classList.remove('hidden');
+            } else {
+                partnerNameSection.classList.add('hidden');
+                document.getElementById('partnerName').value = '';
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const enteredCode = document.getElementById('roomCode').value;
+            
+            if (enteredCode !== currentValidCode) {
+                showMessage("Invalid attendance code.", true);
+                return;
+            }
+
+            const entry = {
+                name: document.getElementById('playerName').value,
+                role: roleSelect.value,
+                partner: document.getElementById('partnerName').value || null
+            };
+
+            roster.push(entry);
+            updateRosterDisplay();
+
+            showMessage("Checked in successfully!", false);
+            form.reset();
+            partnerSection.classList.add('hidden');
+            partnerNameSection.classList.add('hidden');
+        });
+
+        function updateRosterDisplay() {
+            rosterList.innerHTML = '';
+            roster.forEach(person => {
+                const li = document.createElement('li');
+                
+                let html = `<strong>${person.name}</strong> `;
+                html += `<span class="role-badge badge-${person.role}">${person.role.toUpperCase()}</span>`;
+                
+                if (person.role === 'debater') {
+                    if (person.partner) {
+                        html += `<br><small style="color: #6c757d;">Partner: ${person.partner}</small>`;
+                    } else {
+                        html += `<br><small style="color: #dc3545;">Needs Partner</small>`;
+                    }
+                }
+                
+                li.innerHTML = html;
+                rosterList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
