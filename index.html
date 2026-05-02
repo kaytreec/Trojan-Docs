@@ -5,30 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BP Debate Team Platform</title>
     <style>
-        :root {
-            --primary: #990000; /* USC Trojan Cardinal */
-            --primary-hover: #7a0000;
-            --gold: #FFCC00; /* USC Gold */
-            --bg: #f8f9fa;
-            --surface: #ffffff;
-            --text: #212529;
-            --border: #dee2e6;
-        }
-        
+        :root { --primary: #990000; --primary-hover: #7a0000; --gold: #FFCC00; --bg: #f8f9fa; --surface: #ffffff; --text: #212529; --border: #dee2e6; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 2rem 1rem; line-height: 1.5; margin: 0; }
         .container { max-width: 600px; margin: 0 auto; background: var(--surface); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         h2 { text-align: center; color: var(--primary); font-size: 1.75rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
-        h3 { color: var(--primary); }
+        h3 { color: var(--primary); margin-top: 0; }
         .form-group { margin-bottom: 1.5rem; }
         label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
         input[type="text"], input[type="password"], select, textarea { width: 100%; padding: 0.75rem; box-sizing: border-box; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
-        textarea { resize: vertical; min-height: 100px; }
+        textarea { resize: vertical; min-height: 200px; font-family: monospace; }
         button { width: 100%; padding: 0.875rem; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-bottom: 0.5rem;}
         button:hover { background: var(--primary-hover); }
         .btn-secondary { background: #6c757d; }
         .btn-secondary:hover { background: #5a6268; }
         .btn-danger { background: #dc3545; }
         .btn-danger:hover { background: #c82333; }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
         .hidden { display: none !important; }
         #message { margin-bottom: 1.5rem; text-align: center; font-weight: 600; padding: 0.5rem; border-radius: 6px; }
         .success { background-color: #d4edda; color: #155724; }
@@ -48,7 +41,7 @@
 
         <div id="roundDisplayArea" class="hidden">
             <h3>📢 The Draw</h3>
-            <div id="roundContent" style="white-space: pre-wrap; font-weight: 600;"></div>
+            <div id="roundContent" style="white-space: pre-wrap; font-weight: 600; font-family: monospace;"></div>
         </div>
 
         <div id="userSection">
@@ -64,7 +57,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="role">Role for this Round</label>
+                    <label for="role">Role</label>
                     <select id="role" required>
                         <option value="">-- Select --</option>
                         <option value="debater">Debater</option>
@@ -94,14 +87,17 @@
             <button id="logoutBtn" class="btn-secondary" style="margin-bottom: 1.5rem;">Exit Admin</button>
             
             <div class="form-group">
-                <label for="adminCode">Set Active Check-in Code:</label>
+                <label for="adminCode">Set Active Code:</label>
                 <input type="text" id="adminCode">
                 <button type="button" id="updateCodeBtn" style="margin-top: 10px;">Update Live Code</button>
             </div>
             <hr style="border:1px solid #dee2e6; margin: 1.5rem 0;">
+            
             <div class="form-group">
                 <label for="roundSetup">Configure Round / Draw:</label>
-                <textarea id="roundSetup" placeholder="Type the draw here..."></textarea>
+                <button type="button" id="autoPairBtn" class="btn-success" style="margin-bottom: 10px;">✨ Auto-Pair Draft from Roster ✨</button>
+                
+                <textarea id="roundSetup" placeholder="Draw will appear here..."></textarea>
                 <button type="button" id="launchRoundBtn">Launch Round to All Phones</button>
                 <button type="button" id="hideRoundBtn" class="btn-secondary">Hide Round</button>
             </div>
@@ -111,40 +107,56 @@
             <ul id="rosterList"></ul>
         </div>
 
-        <div class="admin-footer">
-            <a id="adminLoginLink">Admin Access</a>
-        </div>
+        <div class="admin-footer"><a id="adminLoginLink">Admin Access</a></div>
     </div>
 
     <script type="module">
-        // Import Firebase functions
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
+        // ==========================================
+        // ⚠️ PASTE YOUR FIREBASE CONFIG HERE ⚠️
+        // ==========================================
         const firebaseConfig = {
-  apiKey: "AIzaSyDWzZZjy3O1KdxUl11wlE2ZuJf73SQi4ug",
-  authDomain: "trojandocs-fe27b.firebaseapp.com",
-  databaseURL: "https://trojandocs-fe27b-default-rtdb.firebaseio.com",
-  projectId: "trojandocs-fe27b",
-  storageBucket: "trojandocs-fe27b.firebasestorage.app",
-  messagingSenderId: "440883306804",
-  appId: "1:440883306804:web:e3ab975311417f59f18561"
-};
-        // Initialize Firebase
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_ID",
+            appId: "YOUR_APP_ID"
+        };
+
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- DATA & CONFIG ---
         const ADMIN_PASSWORD = "tdsadmin";
-        let currentValidCode = "TDS-FRIDAY"; // Default fallback
-        
-        // ADD YOUR TEAM ROSTER HERE
+        let currentValidCode = "TDS-FRIDAY";
+        let currentRosterData = null; // Stores data for auto-pairing
+        const firebaseConfig = {
+
+  apiKey: "AIzaSyDWzZZjy3O1KdxUl11wlE2ZuJf73SQi4ug",
+
+  authDomain: "trojandocs-fe27b.firebaseapp.com",
+
+  databaseURL: "https://trojandocs-fe27b-default-rtdb.firebaseio.com",
+
+  projectId: "trojandocs-fe27b",
+
+  storageBucket: "trojandocs-fe27b.firebasestorage.app",
+
+  messagingSenderId: "440883306804",
+
+  appId: "1:440883306804:web:e3ab975311417f59f18561"
+
+};
+
         const teamMembers = [
             "Alice Smith", "Bob Jones", "Charlie Davis", "Diana Prince",
             "Evan Wright", "Fiona Gallagher", "George Mason", "Hannah Abbott"
         ];
 
-        // --- DOM ELEMENTS ---
+        // --- DOM SETUP ---
         const userSection = document.getElementById('userSection');
         const adminPanel = document.getElementById('adminPanel');
         const checkInForm = document.getElementById('checkInForm');
@@ -159,7 +171,6 @@
         const roundDisplayArea = document.getElementById('roundDisplayArea');
         const roundContent = document.getElementById('roundContent');
 
-        // Populate dropdowns
         teamMembers.sort().forEach(name => {
             playerNameSelect.add(new Option(name, name));
             partnerNameSelect.add(new Option(name, name));
@@ -184,9 +195,7 @@
             userSection.classList.remove('hidden');
         });
 
-        // --- REAL-TIME DATABASE LISTENERS ---
-
-        // 1. Listen for the active attendance code
+        // --- FIREBASE LISTENERS ---
         onValue(ref(db, 'settings/code'), (snapshot) => {
             if(snapshot.exists()) {
                 currentValidCode = snapshot.val();
@@ -194,7 +203,6 @@
             }
         });
 
-        // 2. Listen for the Draw/Round
         onValue(ref(db, 'settings/draw'), (snapshot) => {
             if(snapshot.exists() && snapshot.val() !== "") {
                 roundContent.textContent = snapshot.val();
@@ -207,13 +215,12 @@
             }
         });
 
-        // 3. Listen for Roster Updates
         onValue(ref(db, 'roster'), (snapshot) => {
-            rosterList.innerHTML = ''; // clear current list
-            if(snapshot.exists()) {
-                const data = snapshot.val();
-                for (let key in data) {
-                    const entry = data[key];
+            rosterList.innerHTML = '';
+            currentRosterData = snapshot.val();
+            if(currentRosterData) {
+                for (let key in currentRosterData) {
+                    const entry = currentRosterData[key];
                     const li = document.createElement('li');
                     li.innerHTML = `<strong>${entry.name}</strong> - ${entry.role.toUpperCase()}` + 
                                    (entry.partner ? ` <em>(Partner: ${entry.partner})</em>` : '');
@@ -222,15 +229,97 @@
             }
         });
 
-        // --- ADMIN ACTIONS (Writing to Database) ---
+        // --- NEW: AUTO-PAIRING ALGORITHM ---
+        document.getElementById('autoPairBtn').addEventListener('click', () => {
+            if (!currentRosterData) {
+                return alert("No one is checked in yet!");
+            }
+
+            let debaters = [];
+            let judges = [];
+
+            // 1. Sort into roles
+            for (let key in currentRosterData) {
+                let p = currentRosterData[key];
+                if (p.role === 'judge') judges.push(p.name);
+                else if (p.role === 'debater') debaters.push(p);
+            }
+
+            // Shuffle them so the draw is random
+            debaters = debaters.sort(() => Math.random() - 0.5);
+            judges = judges.sort(() => Math.random() - 0.5);
+
+            let teams = [];
+            let singles = [];
+            let matched = new Set();
+
+            // 2. Form preset partner teams
+            debaters.forEach(d => {
+                if (matched.has(d.name)) return;
+                
+                if (d.partner && d.partner !== "None" && d.partner !== "") {
+                    // Did their partner actually check in?
+                    let p2 = debaters.find(x => x.name === d.partner);
+                    if (p2 && !matched.has(p2.name)) {
+                        teams.push(`${d.name} & ${p2.name}`);
+                        matched.add(d.name);
+                        matched.add(p2.name);
+                    } else {
+                        singles.push(d.name); // Partner missing, treat as single
+                    }
+                } else {
+                    singles.push(d.name); // Checked in as needing partner
+                }
+            });
+
+            // 3. Pair up the remaining singles randomly
+            for (let i = 0; i < singles.length; i += 2) {
+                if (i + 1 < singles.length) {
+                    teams.push(`${singles[i]} & ${singles[i+1]}`);
+                } else {
+                    teams.push(`${singles[i]} (Ironperson)`);
+                }
+            }
+
+            // 4. Build BP Rooms
+            let numRooms = Math.floor(teams.length / 4);
+            let drawText = "";
+
+            if (numRooms === 0) {
+                alert("Not enough debaters for a full room. You need at least 8 debaters (4 teams).");
+                return;
+            }
+
+            for (let r = 0; r < numRooms; r++) {
+                drawText += `=== ROOM ${r + 1} ===\n`;
+                drawText += `OG: ${teams[r * 4]}\n`;
+                drawText += `OO: ${teams[r * 4 + 1]}\n`;
+                drawText += `CG: ${teams[r * 4 + 2]}\n`;
+                drawText += `CO: ${teams[r * 4 + 3]}\n`;
+                drawText += `Judge(s): ${judges[r] || "NONE (Need Judge!)"}\n\n`;
+            }
+
+            // 5. Flag Leftovers
+            let extraTeams = teams.slice(numRooms * 4);
+            let extraJudges = judges.slice(numRooms);
+
+            if (extraTeams.length > 0 || extraJudges.length > 0) {
+                drawText += `=== UNALLOCATED / SWINGS ===\n`;
+                if (extraTeams.length > 0) drawText += `Teams: ${extraTeams.join(', ')}\n`;
+                if (extraJudges.length > 0) drawText += `Extra Judges: ${extraJudges.join(', ')}\n`;
+            }
+
+            // Populate the text box so the Admin can review it
+            document.getElementById('roundSetup').value = drawText;
+        });
+
+        // --- ADMIN DATABASE WRITES ---
         document.getElementById('updateCodeBtn').addEventListener('click', () => {
-            const newCode = document.getElementById('adminCode').value;
-            set(ref(db, 'settings/code'), newCode).then(() => alert("Live code updated for all users!"));
+            set(ref(db, 'settings/code'), document.getElementById('adminCode').value).then(() => alert("Code updated!"));
         });
 
         document.getElementById('launchRoundBtn').addEventListener('click', () => {
-            const drawText = document.getElementById('roundSetup').value;
-            set(ref(db, 'settings/draw'), drawText).then(() => alert("Draw launched to all phones!"));
+            set(ref(db, 'settings/draw'), document.getElementById('roundSetup').value).then(() => alert("Draw launched!"));
         });
 
         document.getElementById('hideRoundBtn').addEventListener('click', () => {
@@ -238,60 +327,33 @@
         });
 
         document.getElementById('clearRosterBtn').addEventListener('click', () => {
-            if(confirm("Are you sure you want to clear the entire check-in roster?")) {
-                remove(ref(db, 'roster'));
-            }
+            if(confirm("Clear the entire check-in roster?")) remove(ref(db, 'roster'));
         });
 
         // --- USER FORM LOGIC ---
         roleSelect.addEventListener('change', (e) => {
-            if (e.target.value === 'debater') {
-                partnerSection.classList.remove('hidden');
-            } else {
-                partnerSection.classList.add('hidden');
-                partnerNameSection.classList.add('hidden');
-                partnerStatus.value = "need_partner";
-            }
+            if (e.target.value === 'debater') { partnerSection.classList.remove('hidden'); } 
+            else { partnerSection.classList.add('hidden'); partnerNameSection.classList.add('hidden'); partnerStatus.value = "need_partner"; }
         });
 
         partnerStatus.addEventListener('change', (e) => {
-            if (e.target.value === 'have_partner') {
-                partnerNameSection.classList.remove('hidden');
-            } else {
-                partnerNameSection.classList.add('hidden');
-                partnerNameSelect.value = '';
-            }
+            if (e.target.value === 'have_partner') { partnerNameSection.classList.remove('hidden'); } 
+            else { partnerNameSection.classList.add('hidden'); partnerNameSelect.value = ''; }
         });
 
         checkInForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            if (document.getElementById('roomCode').value !== currentValidCode) {
-                showMessage("Invalid attendance code. Please check the screen at the front of the room.", true);
-                return;
-            }
-
+            if (document.getElementById('roomCode').value !== currentValidCode) { return showMessage("Invalid code.", true); }
             const name = playerNameSelect.value;
             const partner = partnerNameSelect.value;
+            if (name === partner && partner !== "") { return showMessage("Cannot partner with yourself!", true); }
 
-            if (name === partner && partner !== "") {
-                showMessage("You cannot be your own partner!", true);
-                return;
-            }
-
-            // Push to Firebase instead of local array
-            push(ref(db, 'roster'), {
-                name: name,
-                role: roleSelect.value,
-                partner: partner || null
-            }).then(() => {
-                showMessage("Checked in successfully!", false);
-                checkInForm.reset();
-                partnerSection.classList.add('hidden');
-                partnerNameSection.classList.add('hidden');
-            }).catch((error) => {
-                showMessage("Error checking in. Please check your internet connection.", true);
-            });
+            push(ref(db, 'roster'), { name: name, role: roleSelect.value, partner: partner || null })
+                .then(() => {
+                    showMessage("Checked in successfully!", false);
+                    checkInForm.reset();
+                    partnerSection.classList.add('hidden'); partnerNameSection.classList.add('hidden');
+                }).catch(() => showMessage("Error checking in.", true));
         });
     </script>
 </body>
