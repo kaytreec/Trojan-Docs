@@ -7,7 +7,7 @@
     <style>
         :root { --primary: #990000; --primary-hover: #7a0000; --gold: #FFCC00; --bg: #f4f5f6; --surface: #ffffff; --text: #333; --border: #ddd; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 0; margin: 0; line-height: 1.5; }
-        .container { max-width: 650px; margin: 2rem auto; background: var(--surface); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
+        .container { max-width: 650px; margin: 0 auto; background: var(--surface); border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 100vh;}
         
         /* App Header & Navigation Tabs */
         .header { background: var(--primary); color: white; padding: 1.5rem 1rem 0; text-align: center; }
@@ -18,28 +18,38 @@
         .tab-btn:hover { color: white; background: rgba(0,0,0,0.1); }
 
         /* Content Areas */
-        .tab-content { padding: 2rem; display: none; }
+        .tab-content { padding: 2rem 1.5rem; display: none; }
         .tab-content.active { display: block; }
-        
         h3 { color: var(--primary); margin-top: 0; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
         
         /* Forms & Inputs */
         .form-group { margin-bottom: 1.5rem; }
         label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #555;}
-        input[type="text"], input[type="password"], select, textarea { width: 100%; padding: 0.75rem; box-sizing: border-box; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; font-family: inherit;}
+        input[type="text"], input[type="password"], input[type="number"], select, textarea { width: 100%; padding: 0.75rem; box-sizing: border-box; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; font-family: inherit;}
         textarea { resize: vertical; min-height: 150px; }
         
         /* Buttons */
         button.primary-btn { width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-bottom: 0.5rem; transition: 0.2s;}
         button.primary-btn:hover { background: var(--primary-hover); }
         button.secondary-btn { background: #6c757d; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; }
-        button.danger-btn { background: #dc3545; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; }
+        button.danger-btn { background: #dc3545; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight:bold;}
         button.action-btn { background: var(--gold); color: #333; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
         
         /* Display Areas */
         .motion-banner { background: var(--primary); color: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; font-size: 1.25rem; font-weight: bold; box-shadow: 0 4px 6px rgba(153,0,0,0.2); }
+        .timer-banner { background: var(--gold); color: #333; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .timer-banner h1 { margin: 0; font-size: 3rem; font-variant-numeric: tabular-nums; }
+        .timer-banner p { margin: 0; font-weight: bold; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;}
         .draw-display { background: #fffbdf; border: 2px solid var(--gold); padding: 1.5rem; border-radius: 8px; font-family: monospace; font-size: 1.1rem; white-space: pre-wrap; line-height: 1.6;}
         
+        /* Admin Accordion Menus */
+        details { background: #f8f9fa; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1rem; overflow: hidden; }
+        summary { font-weight: bold; padding: 1rem; background: #eee; cursor: pointer; font-size: 1.1rem; color: var(--primary); list-style: none; display: flex; justify-content: space-between; align-items: center;}
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: '▼'; font-size: 0.8rem; }
+        details[open] summary::after { content: '▲'; }
+        .details-content { padding: 1.5rem; border-top: 1px solid var(--border); }
+
         /* Lists */
         ul { padding-left: 0; list-style-type: none; margin: 0;}
         li { background: #f8f9fa; border: 1px solid var(--border); padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;}
@@ -48,6 +58,12 @@
         #message { margin-bottom: 1.5rem; text-align: center; font-weight: bold; padding: 0.75rem; border-radius: 6px; }
         .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;}
         .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;}
+        
+        /* History Table */
+        .history-card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.9rem; }
+        .history-table th { background: #eee; padding: 6px; text-align: left; }
+        .history-table td { border-top: 1px solid #eee; padding: 6px; }
     </style>
 </head>
 <body>
@@ -58,14 +74,13 @@
                 <button class="tab-btn active" data-tab="tab-checkin">Check-In</button>
                 <button class="tab-btn" data-tab="tab-roster">Live Roster</button>
                 <button class="tab-btn" data-tab="tab-draw">The Draw</button>
-                <button class="tab-btn" data-tab="tab-admin">Admin 🔒</button>
+                <button class="tab-btn" data-tab="tab-admin" style="flex: 0.5;">Admin</button>
             </div>
         </div>
 
         <div id="tab-checkin" class="tab-content active">
             <h3>Round Check-In</h3>
             <div id="message" class="hidden"></div>
-            
             <form id="checkInForm">
                 <div class="form-group">
                     <label>Attendance Code</label>
@@ -107,6 +122,12 @@
         </div>
 
         <div id="tab-draw" class="tab-content">
+            <div id="timerArea" class="timer-banner hidden">
+                <p>Travel Time Remaining</p>
+                <h1 id="countdownDisplay">00:00</h1>
+                <p style="font-size:0.8rem; margin-top:5px; color:#555;">Motion will reveal automatically</p>
+            </div>
+            
             <div id="publicMotionArea" class="motion-banner hidden"></div>
             
             <h3 id="drawHeader" class="hidden">Room Assignments</h3>
@@ -129,55 +150,83 @@
             </div>
 
             <div id="adminDashboard" class="hidden">
-                <button id="logoutBtn" class="secondary-btn" style="float: right;">Lock</button>
-                <h3>Dashboard</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; border: none;">Dashboard</h3>
+                    <button id="logoutBtn" class="secondary-btn" style="padding: 0.25rem 0.75rem;">Lock 🔒</button>
+                </div>
+
+                <details open>
+                    <summary>1. Setup Round & Motion</summary>
+                    <div class="details-content">
+                        <div class="form-group">
+                            <label>Check-In Code for Debaters:</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="adminCode" placeholder="E.g., TDS-1">
+                                <button id="updateCodeBtn" class="action-btn">Update</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>The Motion (Kept secret until timer ends):</label>
+                            <textarea id="adminMotion" placeholder="THBT..." style="min-height: 80px;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Travel Time Countdown (Minutes):</label>
+                            <input type="number" id="adminTimerMinutes" value="3" min="0" step="0.5">
+                        </div>
+                    </div>
+                </details>
+
+                <details open>
+                    <summary>2. The Draw & Launch</summary>
+                    <div class="details-content">
+                        <button id="autoPairBtn" class="primary-btn" style="background: #28a745; margin-bottom: 1rem;">✨ Auto-Pair from Attendance</button>
+                        <div class="form-group">
+                            <textarea id="roundSetup" placeholder="The draw will generate here. You can manually edit it before launching..." style="font-size:0.9rem;"></textarea>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button id="launchRoundBtn" class="primary-btn" style="flex: 2; margin: 0;">🚀 Launch Round & Log History</button>
+                            <button id="hideRoundBtn" class="secondary-btn" style="flex: 1;">Hide Draw</button>
+                        </div>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>3. Manage Permanent Roster</summary>
+                    <div class="details-content">
+                        <p style="color: #666; font-size: 0.9rem; margin-top: 0;">Names added here stay permanently in the database for future rounds.</p>
+                        <div class="form-group" style="display: flex; gap: 10px;">
+                            <input type="text" id="newMemberName" placeholder="Enter full name">
+                            <button id="addMemberBtn" class="action-btn">Add Name</button>
+                        </div>
+                        <ul id="adminRosterEditList" style="max-height: 250px; overflow-y: auto; border: 1px solid #eee; padding: 0.5rem; border-radius: 6px;"></ul>
+                    </div>
+                </details>
                 
-                <div class="form-group">
-                    <label>Active Check-in Code:</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="adminCode" placeholder="E.g., TDS-1">
-                        <button id="updateCodeBtn" class="action-btn">Set Code</button>
+                <details>
+                    <summary>4. Historical Attendance Tracker</summary>
+                    <div class="details-content">
+                        <p style="color: #666; font-size: 0.9rem; margin-top: 0;">A permanent log of who attended and what position they debated, saved every time you Launch a round.</p>
+                        <div id="historyContainer">
+                            <p style="text-align:center; color:#888;">No history recorded yet.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Current Motion (Optional):</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="adminMotion" placeholder="THBT...">
-                        <button id="updateMotionBtn" class="action-btn">Set Motion</button>
+                </details>
+
+                <details>
+                    <summary style="color: #dc3545;">5. Backend / Database Reset</summary>
+                    <div class="details-content">
+                        <p style="color: #666; font-size: 0.9rem; margin-top: 0;">Use this to clear all check-ins and wipe the draw from the public board to prep for the next round.</p>
+                        <button id="clearRosterBtn" class="danger-btn" style="width: 100%; padding: 1rem;">Clear Active Attendance & Reset Round</button>
                     </div>
-                </div>
-
-                <hr style="margin: 2rem 0; border: 1px solid #eee;">
-
-                <h3>Generate Round</h3>
-                <button id="autoPairBtn" class="primary-btn" style="background: #28a745;">✨ Auto-Pair Rooms from Roster</button>
-                <div class="form-group">
-                    <textarea id="roundSetup" placeholder="The draw will generate here. You can manually edit it before launching..."></textarea>
-                    <div style="display: flex; gap: 10px;">
-                        <button id="launchRoundBtn" class="primary-btn" style="flex: 2; margin: 0;">🚀 Launch Draw to All</button>
-                        <button id="hideRoundBtn" class="secondary-btn" style="flex: 1;">Hide Draw</button>
-                    </div>
-                </div>
-                
-                <button id="clearRosterBtn" class="danger-btn" style="width: 100%; margin-top: 1rem; padding: 1rem;">Reset Round (Clear Attendance & Draw)</button>
-
-                <hr style="margin: 2rem 0; border: 1px solid #eee;">
-
-                <h3>Manage Team Roster</h3>
-                <p style="color: #666; font-size: 0.9rem; margin-top: -10px;">Add or remove names from the public Check-In dropdown list.</p>
-                <div class="form-group" style="display: flex; gap: 10px;">
-                    <input type="text" id="newMemberName" placeholder="Enter full name">
-                    <button id="addMemberBtn" class="action-btn">Add Name</button>
-                </div>
-                <ul id="adminRosterEditList" style="max-height: 250px; overflow-y: auto; border: 1px solid #eee; padding: 0.5rem; border-radius: 6px;"></ul>
+                </details>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove, child, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-        const firebaseConfig = {
+        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+const firebaseConfig = {
   apiKey: "AIzaSyDWzZZjy3O1KdxUl11wlE2ZuJf73SQi4ug",
   authDomain: "trojandocs-fe27b.firebaseapp.com",
   databaseURL: "https://trojandocs-fe27b-default-rtdb.firebaseio.com",
@@ -186,6 +235,7 @@
   messagingSenderId: "440883306804",
   appId: "1:440883306804:web:e3ab975311417f59f18561"
 };
+
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
@@ -194,6 +244,7 @@
         let currentValidCode = "TDS";
         let currentAttendanceData = null; 
         let teamRosterArray = [];
+        let timerInterval;
 
         // --- TAB LOGIC ---
         const tabBtns = document.querySelectorAll('.tab-btn');
@@ -202,8 +253,6 @@
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const targetId = btn.getAttribute('data-tab');
-                
-                // Switch UI Tabs
                 tabBtns.forEach(b => b.classList.remove('active'));
                 tabContents.forEach(c => c.classList.remove('active'));
                 btn.classList.add('active');
@@ -211,7 +260,6 @@
             });
         });
 
-        // --- UI UTILITIES ---
         function showMessage(text, isError) {
             const msg = document.getElementById('message');
             msg.textContent = text;
@@ -230,10 +278,8 @@
             if (pwdInput.value === ADMIN_PASSWORD) {
                 loginScreen.classList.add('hidden');
                 dashboard.classList.remove('hidden');
-                pwdInput.value = ''; // clear password
-            } else {
-                alert("Incorrect password.");
-            }
+                pwdInput.value = ''; 
+            } else { alert("Incorrect password."); }
         });
 
         document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -243,7 +289,7 @@
 
         // --- FIREBASE LISTENERS ---
 
-        // 1. Listen for Team Roster (Populates Dropdowns)
+        // 1. Permanent Roster
         onValue(ref(db, 'team_roster'), (snapshot) => {
             const playerSelect = document.getElementById('playerName');
             const partnerSelect = document.getElementById('partnerName');
@@ -262,132 +308,245 @@
                     partnerSelect.add(new Option(member.name, member.name));
                     
                     const li = document.createElement('li');
-                    li.innerHTML = `<span>${member.name}</span> <button class="danger-btn" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;" data-id="${member.id}">Delete</button>`;
+                    li.innerHTML = `<span>${member.name}</span> <button class="danger-btn" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;" data-id="${member.id}">Remove</button>`;
                     editList.appendChild(li);
                 });
 
                 editList.querySelectorAll('.danger-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const id = e.target.getAttribute('data-id');
-                        if(confirm("Remove this person from the team roster permanently?")) {
-                            remove(ref(db, `team_roster/${id}`));
-                        }
+                        if(confirm("Remove this person permanently?")) remove(ref(db, `team_roster/${id}`));
                     });
                 });
-            } else {
-                playerSelect.innerHTML = '<option value="">-- Ask Admin to add names --</option>';
-                editList.innerHTML = '<p style="text-align:center; color:#888;">No team members added yet.</p>';
             }
         });
 
-        // 2. Listen for General Settings (Code & Motion)
+        // 2. Settings, Draw, Motion, and Timer
         onValue(ref(db, 'settings'), (snapshot) => {
+            clearInterval(timerInterval); 
+
+            const publicMotion = document.getElementById('publicMotionArea');
+            const timerArea = document.getElementById('timerArea');
+            const countdownDisplay = document.getElementById('countdownDisplay');
+            const publicDraw = document.getElementById('publicDrawArea');
+            const drawHeader = document.getElementById('drawHeader');
+            const waitingMsg = document.getElementById('waitingForDraw');
+            
+            publicMotion.classList.add('hidden');
+            timerArea.classList.add('hidden');
+            publicDraw.classList.add('hidden');
+            drawHeader.classList.add('hidden');
+            waitingMsg.classList.remove('hidden');
+
             if(snapshot.exists()) {
                 const settings = snapshot.val();
-                const publicMotion = document.getElementById('publicMotionArea');
-                const publicDraw = document.getElementById('publicDrawArea');
-                const drawHeader = document.getElementById('drawHeader');
-                const waitingMsg = document.getElementById('waitingForDraw');
                 
-                // Code
                 if (settings.code) {
                     currentValidCode = settings.code;
                     document.getElementById('adminCode').value = currentValidCode;
                 }
 
-                // Motion
-                if (settings.motion && settings.motion.trim() !== "") {
-                    publicMotion.textContent = "Motion: " + settings.motion;
-                    publicMotion.classList.remove('hidden');
-                    document.getElementById('adminMotion').value = settings.motion;
-                } else {
-                    publicMotion.classList.add('hidden');
-                    document.getElementById('adminMotion').value = "";
-                }
-
-                // Draw
-                if(settings.draw && settings.draw.trim() !== "") {
+                if (settings.draw && settings.draw.trim() !== "") {
                     publicDraw.textContent = settings.draw;
                     publicDraw.classList.remove('hidden');
                     drawHeader.classList.remove('hidden');
                     waitingMsg.classList.add('hidden');
                     document.getElementById('roundSetup').value = settings.draw;
+                    
+                    if (settings.motionReleaseTime && settings.motion) {
+                        const releaseTime = settings.motionReleaseTime;
+                        document.getElementById('adminMotion').value = settings.motion;
+
+                        if (Date.now() >= releaseTime) {
+                            publicMotion.textContent = "Motion: " + settings.motion;
+                            publicMotion.classList.remove('hidden');
+                        } else {
+                            timerArea.classList.remove('hidden');
+                            
+                            function updateTimer() {
+                                const now = Date.now();
+                                const diff = releaseTime - now;
+                                
+                                if (diff <= 0) {
+                                    clearInterval(timerInterval);
+                                    timerArea.classList.add('hidden');
+                                    publicMotion.textContent = "Motion: " + settings.motion;
+                                    publicMotion.classList.remove('hidden');
+                                    return;
+                                }
+                                
+                                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                                countdownDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                            }
+                            
+                            updateTimer();
+                            timerInterval = setInterval(updateTimer, 1000);
+                        }
+                    }
                 } else {
-                    publicDraw.classList.add('hidden');
-                    drawHeader.classList.add('hidden');
-                    waitingMsg.classList.remove('hidden');
                     document.getElementById('roundSetup').value = "";
+                    document.getElementById('adminMotion').value = "";
                 }
             }
         });
 
-        // 3. Listen for Live Attendance
+        // 3. Live Attendance
         onValue(ref(db, 'attendance'), (snapshot) => {
             const list = document.getElementById('attendanceList');
             const emptyState = document.getElementById('emptyAttendance');
             list.innerHTML = '';
-            currentAttendanceData = snapshot.val();
+            currentAttendanceData = snapshot.val() || {};
             
-            if(currentAttendanceData) {
+            if(Object.keys(currentAttendanceData).length > 0) {
                 emptyState.style.display = 'none';
                 for (let key in currentAttendanceData) {
                     const entry = currentAttendanceData[key];
                     const li = document.createElement('li');
-                    
                     let roleColor = entry.role === 'judge' ? '#28a745' : (entry.role === 'debater' ? '#007bff' : '#6c757d');
-                    
-                    li.innerHTML = `
-                        <div>
-                            <strong>${entry.name}</strong> 
-                            ${entry.partner && entry.partner !== "None" ? `<br><small style="color: #666;">Partnering with: ${entry.partner}</small>` : ''}
-                        </div>
-                        <span style="background: ${roleColor}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">
-                            ${entry.role.toUpperCase()}
-                        </span>
-                    `;
+                    li.innerHTML = `<div><strong>${entry.name}</strong> ${entry.partner && entry.partner !== "None" ? `<br><small style="color: #666;">Partnering with: ${entry.partner}</small>` : ''}</div>
+                        <span style="background: ${roleColor}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">${entry.role.toUpperCase()}</span>`;
                     list.appendChild(li);
                 }
-            } else {
-                emptyState.style.display = 'block';
+            } else { emptyState.style.display = 'block'; }
+        });
+
+        // 4. NEW: Historical Round Tracker Listener
+        onValue(ref(db, 'history'), (snapshot) => {
+            const container = document.getElementById('historyContainer');
+            container.innerHTML = '';
+            
+            if (!snapshot.exists()) {
+                container.innerHTML = '<p style="text-align:center; color:#888;">No history recorded yet.</p>';
+                return;
             }
+            
+            const data = snapshot.val();
+            // Show newest records first
+            const keys = Object.keys(data).reverse();
+            
+            keys.forEach(key => {
+                const round = data[key];
+                const dateObj = new Date(round.timestamp);
+                const dateStr = dateObj.toLocaleDateString() + " at " + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                let html = `<div class="history-card">
+                    <div style="display:flex; justify-content:space-between;">
+                        <h4 style="margin:0 0 10px 0; color:var(--primary);">${dateStr}</h4>
+                        <span style="font-size:0.8rem; background:#eee; padding:2px 6px; border-radius:4px;">${round.code}</span>
+                    </div>
+                    <p style="margin:0 0 10px 0; font-size:0.95rem;"><strong>Motion:</strong> ${round.motion || 'Not specified'}</p>
+                    <table class="history-table">
+                        <tr><th>Name</th><th>Role</th><th>Position</th><th>Room</th></tr>`;
+                
+                for(let name in round.attendees) {
+                    let a = round.attendees[name];
+                    html += `<tr><td>${name}</td><td>${a.role}</td><td>${a.position}</td><td>${a.room}</td></tr>`;
+                }
+                html += `</table></div>`;
+                container.innerHTML += html;
+            });
         });
 
         // --- ADMIN CONTROLS ---
+        
         document.getElementById('addMemberBtn').addEventListener('click', () => {
             const nameInput = document.getElementById('newMemberName');
-            const name = nameInput.value.trim();
-            if (name) {
-                push(ref(db, 'team_roster'), name).then(() => { nameInput.value = ""; });
+            if (nameInput.value.trim()) {
+                push(ref(db, 'team_roster'), nameInput.value.trim())
+                .then(() => { nameInput.value = ""; alert("Added to Permanent Roster!"); })
             }
         });
 
         document.getElementById('updateCodeBtn').addEventListener('click', () => {
             set(ref(db, 'settings/code'), document.getElementById('adminCode').value).then(() => alert("Code updated!"));
         });
-        document.getElementById('updateMotionBtn').addEventListener('click', () => {
-            set(ref(db, 'settings/motion'), document.getElementById('adminMotion').value).then(() => alert("Motion updated!"));
-        });
+
+        // LAUNCH ROUND, TIMER, & SAVE TO HISTORY
         document.getElementById('launchRoundBtn').addEventListener('click', () => {
-            set(ref(db, 'settings/draw'), document.getElementById('roundSetup').value).then(() => alert("Draw launched!"));
+            const drawValue = document.getElementById('roundSetup').value;
+            const motionValue = document.getElementById('adminMotion').value;
+            const timerMins = parseFloat(document.getElementById('adminTimerMinutes').value) || 0;
+            const activeCode = document.getElementById('adminCode').value;
+            
+            if (!drawValue) return alert("You must generate or type a draw first!");
+
+            const releaseTime = Date.now() + (timerMins * 60000); 
+
+            // 1. Launch Round Live
+            set(ref(db, 'settings'), {
+                code: activeCode,
+                draw: drawValue,
+                motion: motionValue,
+                motionReleaseTime: releaseTime
+            });
+
+            // 2. Parse text and build History Record
+            let historyRecord = {
+                timestamp: Date.now(),
+                code: activeCode,
+                motion: motionValue,
+                attendees: {}
+            };
+
+            const drawLines = drawValue.split('\n');
+
+            for (let key in currentAttendanceData) {
+                let p = currentAttendanceData[key];
+                let position = "N/A";
+                let room = "N/A";
+
+                if (p.role === 'debater' || p.role === 'judge') {
+                    let currentRoom = "Unknown Room";
+                    for (let line of drawLines) {
+                        if (line.includes('=== ROOM')) {
+                            currentRoom = line.replace(/===/g, '').trim();
+                        }
+                        // Check if their name is in this line
+                        if (line.includes(p.name)) {
+                            room = currentRoom;
+                            if (line.startsWith('OG:')) position = 'OG';
+                            else if (line.startsWith('OO:')) position = 'OO';
+                            else if (line.startsWith('CG:')) position = 'CG';
+                            else if (line.startsWith('CO:')) position = 'CO';
+                            else if (line.startsWith('Judge') || p.role === 'judge') position = 'Judge';
+                        }
+                    }
+                }
+
+                historyRecord.attendees[p.name] = {
+                    role: p.role,
+                    position: position,
+                    room: room
+                };
+            }
+
+            // Save to database
+            push(ref(db, 'history'), historyRecord).then(() => {
+                alert("Round launched, timer started, and attendance permanently logged to History!");
+            });
         });
+
         document.getElementById('hideRoundBtn').addEventListener('click', () => {
             set(ref(db, 'settings/draw'), null);
+            set(ref(db, 'settings/motion'), null);
+            set(ref(db, 'settings/motionReleaseTime'), null);
         });
+
         document.getElementById('clearRosterBtn').addEventListener('click', () => {
-            if(confirm("Are you sure? This deletes the current attendance and hides the draw.")) {
+            if(confirm("DANGER: This deletes all active check-ins and clears the draw/motion. (Permanent history will NOT be deleted). Continue?")) {
                 remove(ref(db, 'attendance'));
                 set(ref(db, 'settings/draw'), null);
                 set(ref(db, 'settings/motion'), null);
+                set(ref(db, 'settings/motionReleaseTime'), null);
             }
         });
 
         // --- AUTO-PAIRING ALGORITHM ---
         document.getElementById('autoPairBtn').addEventListener('click', () => {
-            if (!currentAttendanceData) return alert("No one is checked in yet!");
+            if (Object.keys(currentAttendanceData || {}).length === 0) return alert("No one is checked in yet!");
 
-            let debaters = [];
-            let judges = [];
-
+            let debaters = [], judges = [];
             for (let key in currentAttendanceData) {
                 let p = currentAttendanceData[key];
                 if (p.role === 'judge') judges.push(p.name);
@@ -397,9 +556,7 @@
             debaters = debaters.sort(() => Math.random() - 0.5);
             judges = judges.sort(() => Math.random() - 0.5);
 
-            let teams = [];
-            let singles = [];
-            let matched = new Set();
+            let teams = [], singles = [], matched = new Set();
 
             debaters.forEach(d => {
                 if (matched.has(d.name)) return;
@@ -423,9 +580,7 @@
             if (numRooms === 0) return alert("Not enough debaters for a full room. You need at least 4 teams (8 people).");
 
             for (let r = 0; r < numRooms; r++) {
-                drawText += `=== ROOM ${r + 1} ===\n`;
-                drawText += `OG: ${teams[r * 4]}\nOO: ${teams[r * 4 + 1]}\nCG: ${teams[r * 4 + 2]}\nCO: ${teams[r * 4 + 3]}\n`;
-                drawText += `Judge(s): ${judges[r] || "NONE (Need Judge!)"}\n\n`;
+                drawText += `=== ROOM ${r + 1} ===\nOG: ${teams[r * 4]}\nOO: ${teams[r * 4 + 1]}\nCG: ${teams[r * 4 + 2]}\nCO: ${teams[r * 4 + 3]}\nJudge(s): ${judges[r] || "NONE (Need Judge!)"}\n\n`;
             }
 
             let extraTeams = teams.slice(numRooms * 4);
@@ -469,15 +624,12 @@
             if (name === partner && partner !== "") return showMessage("You cannot partner with yourself!", true);
 
             push(ref(db, 'attendance'), { 
-                name: name, 
-                role: roleSelect.value, 
-                partner: partner || null,
-                timestamp: Date.now()
+                name: name, role: roleSelect.value, partner: partner || null, timestamp: Date.now()
             }).then(() => {
                 showMessage("Checked in successfully! You can view the Live Roster tab.", false);
                 document.getElementById('checkInForm').reset();
                 partnerSec.classList.add('hidden'); partnerNameSec.classList.add('hidden');
-            }).catch(() => showMessage("Error checking in. Please try again.", true));
+            }).catch((err) => showMessage("Error checking in: " + err.message, true));
         });
     </script>
 </body>
