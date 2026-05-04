@@ -5,59 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BP Debate Team Platform</title>
     <style>
-        :root { --primary: #990000; --primary-hover: #7a0000; --gold: #FFCC00; --bg: #f8f9fa; --surface: #ffffff; --text: #212529; --border: #dee2e6; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 2rem 1rem; line-height: 1.5; margin: 0; }
-        .container { max-width: 600px; margin: 0 auto; background: var(--surface); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        h2 { text-align: center; color: var(--primary); font-size: 1.75rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
-        h3 { color: var(--primary); margin-top: 0; }
+        :root { --primary: #990000; --primary-hover: #7a0000; --gold: #FFCC00; --bg: #f4f5f6; --surface: #ffffff; --text: #333; --border: #ddd; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 1rem; margin: 0; line-height: 1.5; }
+        .container { max-width: 650px; margin: 0 auto; background: var(--surface); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
+        
+        /* Header & Tabs */
+        .header { background: var(--primary); color: white; padding: 1.5rem 1rem 1rem; text-align: center; }
+        .header h2 { margin: 0 0 1rem 0; font-size: 1.5rem; }
+        .tabs { display: flex; background: #7a0000; }
+        .tab-btn { flex: 1; padding: 1rem 0.5rem; background: transparent; color: rgba(255,255,255,0.7); border: none; font-weight: 600; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        .tab-btn.active { color: var(--gold); border-bottom: 4px solid var(--gold); background: rgba(0,0,0,0.1); }
+        .tab-btn:hover { color: white; }
+
+        /* Content Areas */
+        .tab-content { padding: 2rem; display: none; }
+        .tab-content.active { display: block; }
+        
+        h3 { color: var(--primary); margin-top: 0; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+        
+        /* Forms & Inputs */
         .form-group { margin-bottom: 1.5rem; }
-        label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
-        input[type="text"], input[type="password"], select, textarea { width: 100%; padding: 0.75rem; box-sizing: border-box; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
-        textarea { resize: vertical; min-height: 200px; font-family: monospace; }
-        button { width: 100%; padding: 0.875rem; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-bottom: 0.5rem;}
-        button:hover { background: var(--primary-hover); }
-        .btn-secondary { background: #6c757d; }
-        .btn-secondary:hover { background: #5a6268; }
-        .btn-danger { background: #dc3545; }
-        .btn-danger:hover { background: #c82333; }
-        .btn-success { background: #28a745; }
-        .btn-success:hover { background: #218838; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #555;}
+        input[type="text"], select, textarea { width: 100%; padding: 0.75rem; box-sizing: border-box; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; font-family: inherit;}
+        textarea { resize: vertical; min-height: 150px; }
+        
+        /* Buttons */
+        button.primary-btn { width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-bottom: 0.5rem; transition: 0.2s;}
+        button.primary-btn:hover { background: var(--primary-hover); }
+        button.secondary-btn { background: #6c757d; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; }
+        button.danger-btn { background: #dc3545; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; }
+        button.action-btn { background: var(--gold); color: #333; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
+        /* Display Areas */
+        .motion-banner { background: var(--primary); color: white; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; font-size: 1.1rem; font-weight: 600; box-shadow: 0 4px 6px rgba(153,0,0,0.2); }
+        #roundDisplayArea { background: #fffbdf; border: 2px solid var(--gold); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; font-family: monospace; font-size: 1.05rem; white-space: pre-wrap; }
+        
+        /* Lists */
+        ul { padding-left: 0; list-style-type: none; margin: 0;}
+        li { background: #f8f9fa; border: 1px solid var(--border); padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;}
+        
         .hidden { display: none !important; }
-        #message { margin-bottom: 1.5rem; text-align: center; font-weight: 600; padding: 0.5rem; border-radius: 6px; }
-        .success { background-color: #d4edda; color: #155724; }
-        .error { background-color: #f8d7da; color: #721c24; }
-        #roundDisplayArea { background: #fff3cd; border: 1px solid #ffeeba; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; }
-        #adminPanel { border: 2px solid var(--gold); padding: 1.5rem; background: #fffbdf; border-radius: 8px; margin-top: 1rem; }
-        .admin-footer { text-align: center; margin-top: 2rem; font-size: 0.85rem; }
-        .admin-footer a { color: #6c757d; text-decoration: underline; cursor: pointer; }
-        ul { padding-left: 0; list-style-type: none;}
-        li { background: white; border: 1px solid var(--border); padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 4px;}
+        #message { margin-bottom: 1.5rem; text-align: center; font-weight: bold; padding: 0.75rem; border-radius: 6px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;}
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;}
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Debate Check-In</h2>
-        <div id="message" class="hidden"></div>
-
-        <div id="roundDisplayArea" class="hidden">
-            <h3>📢 The Draw</h3>
-            <div id="roundContent" style="white-space: pre-wrap; font-weight: 600; font-family: monospace;"></div>
+        <div class="header">
+            <h2>TDS Debate Platform</h2>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="checkinTab">Check-In</button>
+                <button class="tab-btn" data-tab="attendanceTab">Attendance</button>
+                <button class="tab-btn" id="adminTabBtn" data-tab="adminTab">Admin</button>
+            </div>
         </div>
 
-        <div id="userSection">
+        <div id="checkinTab" class="tab-content active">
+            <div id="message" class="hidden"></div>
+            
+            <div id="motionDisplayArea" class="motion-banner hidden"></div>
+
+            <div id="roundDisplayArea" class="hidden"></div>
+
             <form id="checkInForm">
                 <div class="form-group">
-                    <label for="roomCode">Attendance Code</label>
-                    <input type="text" id="roomCode" required placeholder="Enter today's code">
+                    <label>Attendance Code</label>
+                    <input type="text" id="roomCode" required placeholder="Enter the code on the board">
                 </div>
                 <div class="form-group">
-                    <label for="playerName">Your Name</label>
-                    <select id="playerName" required>
-                        <option value="">-- Select Your Name --</option>
-                    </select>
+                    <label>Your Name</label>
+                    <select id="playerName" required><option value="">-- Loading Roster... --</option></select>
                 </div>
                 <div class="form-group">
-                    <label for="role">Role</label>
+                    <label>Your Role</label>
                     <select id="role" required>
                         <option value="">-- Select --</option>
                         <option value="debater">Debater</option>
@@ -66,55 +87,75 @@
                     </select>
                 </div>
                 <div id="partnerSection" class="form-group hidden">
-                    <label for="partnerStatus">Partner Status</label>
+                    <label>Partner Status</label>
                     <select id="partnerStatus">
                         <option value="need_partner">I need a partner / Ironperson</option>
                         <option value="have_partner">I have a partner</option>
                     </select>
                 </div>
                 <div id="partnerNameSection" class="form-group hidden">
-                    <label for="partnerName">Partner's Name</label>
-                    <select id="partnerName">
-                        <option value="">-- Select Partner --</option>
-                    </select>
+                    <label>Partner's Name</label>
+                    <select id="partnerName"><option value="">-- Select Partner --</option></select>
                 </div>
-                <button type="submit">Submit Check-In</button>
+                <button type="submit" class="primary-btn">Submit Check-In</button>
             </form>
         </div>
 
-        <div id="adminPanel" class="hidden">
-            <h3>Admin Dashboard</h3>
-            <button id="logoutBtn" class="btn-secondary" style="margin-bottom: 1.5rem;">Exit Admin</button>
-            
-            <div class="form-group">
-                <label for="adminCode">Set Active Code:</label>
-                <input type="text" id="adminCode">
-                <button type="button" id="updateCodeBtn" style="margin-top: 10px;">Update Live Code</button>
-            </div>
-            <hr style="border:1px solid #dee2e6; margin: 1.5rem 0;">
-            
-            <div class="form-group">
-                <label for="roundSetup">Configure Round / Draw:</label>
-                <button type="button" id="autoPairBtn" class="btn-success" style="margin-bottom: 10px;">✨ Auto-Pair Draft from Roster ✨</button>
-                
-                <textarea id="roundSetup" placeholder="Draw will appear here..."></textarea>
-                <button type="button" id="launchRoundBtn">Launch Round to All Phones</button>
-                <button type="button" id="hideRoundBtn" class="btn-secondary">Hide Round</button>
-            </div>
-            <hr style="border:1px solid #dee2e6; margin: 1.5rem 0;">
-            <h4>Live Roster:</h4>
-            <button type="button" id="clearRosterBtn" class="btn-danger" style="font-size: 0.9rem; padding: 0.5rem;">Clear Entire Roster</button>
-            <ul id="rosterList"></ul>
+        <div id="attendanceTab" class="tab-content">
+            <h3>Live Attendance</h3>
+            <p style="color: #666; font-size: 0.9rem; margin-top: -10px;">Everyone currently checked in for this round.</p>
+            <ul id="attendanceList"></ul>
+            <div id="emptyAttendance" style="text-align: center; color: #888; padding: 2rem;">No one has checked in yet.</div>
         </div>
 
-        <div class="admin-footer"><a id="adminLoginLink">Admin Access</a></div>
+        <div id="adminTab" class="tab-content">
+            <h3>Round Setup</h3>
+            <div class="form-group">
+                <label>Active Check-in Code:</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="adminCode" placeholder="E.g., TDS-1">
+                    <button id="updateCodeBtn" class="action-btn">Set</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Current Motion (Optional):</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="adminMotion" placeholder="THBT...">
+                    <button id="updateMotionBtn" class="action-btn">Set</button>
+                </div>
+            </div>
+
+            <hr style="margin: 2rem 0; border: 1px solid #eee;">
+
+            <h3>The Draw</h3>
+            <button id="autoPairBtn" class="primary-btn" style="background: #28a745;">✨ Auto-Pair Draw from Attendance</button>
+            <div class="form-group">
+                <textarea id="roundSetup" placeholder="The draw will generate here. You can manually edit it before launching..."></textarea>
+                <div style="display: flex; gap: 10px;">
+                    <button id="launchRoundBtn" class="primary-btn" style="flex: 2; margin: 0;">🚀 Launch Draw to All</button>
+                    <button id="hideRoundBtn" class="secondary-btn" style="flex: 1;">Hide Draw</button>
+                </div>
+            </div>
+            
+            <button id="clearRosterBtn" class="danger-btn" style="width: 100%; margin-top: 1rem; padding: 1rem;">Reset Round (Clear Attendance & Draw)</button>
+
+            <hr style="margin: 2rem 0; border: 1px solid #eee;">
+
+            <h3>Manage Team Roster</h3>
+            <p style="color: #666; font-size: 0.9rem; margin-top: -10px;">Add or remove names from the check-in dropdowns.</p>
+            <div class="form-group" style="display: flex; gap: 10px;">
+                <input type="text" id="newMemberName" placeholder="Enter full name">
+                <button id="addMemberBtn" class="action-btn">Add Name</button>
+            </div>
+            <ul id="adminRosterEditList" style="max-height: 250px; overflow-y: auto; border: 1px solid #eee; padding: 0.5rem; border-radius: 6px;"></ul>
+            
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-
-       const firebaseConfig = {
+        import { getDatabase, ref, set, push, onValue, remove, child, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+const firebaseConfig = {
   apiKey: "AIzaSyDWzZZjy3O1KdxUl11wlE2ZuJf73SQi4ug",
   authDomain: "trojandocs-fe27b.firebaseapp.com",
   databaseURL: "https://trojandocs-fe27b-default-rtdb.firebaseio.com",
@@ -136,122 +177,202 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // --- STATE & SECURITY ---
         const ADMIN_PASSWORD = "tdsadmin";
-        let currentValidCode = "TDS-FRIDAY";
-        let currentRosterData = null; // Stores data for auto-pairing
-        const firebaseConfig = {
+        let currentValidCode = "TDS";
+        let currentAttendanceData = null; 
+        let teamRosterArray = [];
 
-  apiKey: "AIzaSyDWzZZjy3O1KdxUl11wlE2ZuJf73SQi4ug",
+        // --- TAB LOGIC ---
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
 
-  authDomain: "trojandocs-fe27b.firebaseapp.com",
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-tab');
+                
+                // Security check for Admin Tab
+                if (targetId === 'adminTab') {
+                    const pwd = prompt("Enter Admin Password:");
+                    if (pwd !== ADMIN_PASSWORD) {
+                        if (pwd !== null) alert("Incorrect password.");
+                        return; // Stop them from entering
+                    }
+                }
 
-  databaseURL: "https://trojandocs-fe27b-default-rtdb.firebaseio.com",
-
-  projectId: "trojandocs-fe27b",
-
-  storageBucket: "trojandocs-fe27b.firebasestorage.app",
-
-  messagingSenderId: "440883306804",
-
-  appId: "1:440883306804:web:e3ab975311417f59f18561"
-
-};
-
-        const teamMembers = [
-            "Alice Smith", "Bob Jones", "Charlie Davis", "Diana Prince",
-            "Evan Wright", "Fiona Gallagher", "George Mason", "Hannah Abbott"
-        ];
-
-        // --- DOM SETUP ---
-        const userSection = document.getElementById('userSection');
-        const adminPanel = document.getElementById('adminPanel');
-        const checkInForm = document.getElementById('checkInForm');
-        const roleSelect = document.getElementById('role');
-        const partnerSection = document.getElementById('partnerSection');
-        const partnerStatus = document.getElementById('partnerStatus');
-        const partnerNameSection = document.getElementById('partnerNameSection');
-        const messageDiv = document.getElementById('message');
-        const rosterList = document.getElementById('rosterList');
-        const playerNameSelect = document.getElementById('playerName');
-        const partnerNameSelect = document.getElementById('partnerName');
-        const roundDisplayArea = document.getElementById('roundDisplayArea');
-        const roundContent = document.getElementById('roundContent');
-
-        teamMembers.sort().forEach(name => {
-            playerNameSelect.add(new Option(name, name));
-            partnerNameSelect.add(new Option(name, name));
+                // Switch UI
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(targetId).classList.add('active');
+            });
         });
 
+        // --- UI UTILITIES ---
         function showMessage(text, isError) {
-            messageDiv.textContent = text;
-            messageDiv.className = isError ? 'error' : 'success';
-            messageDiv.classList.remove('hidden');
-            setTimeout(() => { messageDiv.classList.add('hidden'); }, 3000);
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = isError ? 'error' : 'success';
+            msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 4000);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // --- ADMIN LOGIN ---
-        document.getElementById('adminLoginLink').addEventListener('click', () => {
-            if (prompt("Enter Admin Password:") === ADMIN_PASSWORD) {
-                userSection.classList.add('hidden');
-                adminPanel.classList.remove('hidden');
-            } else { alert("Incorrect password."); }
-        });
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            adminPanel.classList.add('hidden');
-            userSection.classList.remove('hidden');
-        });
-
         // --- FIREBASE LISTENERS ---
-        onValue(ref(db, 'settings/code'), (snapshot) => {
+
+        // 1. Listen for Team Roster (Populates Dropdowns & Admin Edit List)
+        onValue(ref(db, 'team_roster'), (snapshot) => {
+            const playerSelect = document.getElementById('playerName');
+            const partnerSelect = document.getElementById('partnerName');
+            const editList = document.getElementById('adminRosterEditList');
+            
+            playerSelect.innerHTML = '<option value="">-- Select Your Name --</option>';
+            partnerSelect.innerHTML = '<option value="">-- Select Partner --</option>';
+            editList.innerHTML = '';
+            
             if(snapshot.exists()) {
-                currentValidCode = snapshot.val();
-                document.getElementById('adminCode').value = currentValidCode;
-            }
-        });
-
-        onValue(ref(db, 'settings/draw'), (snapshot) => {
-            if(snapshot.exists() && snapshot.val() !== "") {
-                roundContent.textContent = snapshot.val();
-                roundDisplayArea.classList.remove('hidden');
-                document.getElementById('roundSetup').value = snapshot.val();
-            } else {
-                roundDisplayArea.classList.add('hidden');
-                roundContent.textContent = "";
-                document.getElementById('roundSetup').value = "";
-            }
-        });
-
-        onValue(ref(db, 'roster'), (snapshot) => {
-            rosterList.innerHTML = '';
-            currentRosterData = snapshot.val();
-            if(currentRosterData) {
-                for (let key in currentRosterData) {
-                    const entry = currentRosterData[key];
+                const rosterObj = snapshot.val();
+                // Convert object back to array, sort alphabetically
+                teamRosterArray = Object.keys(rosterObj).map(k => ({id: k, name: rosterObj[k]})).sort((a,b) => a.name.localeCompare(b.name));
+                
+                teamRosterArray.forEach(member => {
+                    // Populate Check-in Dropdowns
+                    playerSelect.add(new Option(member.name, member.name));
+                    partnerSelect.add(new Option(member.name, member.name));
+                    
+                    // Populate Admin Edit List
                     const li = document.createElement('li');
-                    li.innerHTML = `<strong>${entry.name}</strong> - ${entry.role.toUpperCase()}` + 
-                                   (entry.partner ? ` <em>(Partner: ${entry.partner})</em>` : '');
-                    rosterList.appendChild(li);
+                    li.innerHTML = `<span>${member.name}</span> <button class="danger-btn" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;" data-id="${member.id}">Delete</button>`;
+                    editList.appendChild(li);
+                });
+
+                // Attach delete logic to newly created buttons
+                editList.querySelectorAll('.danger-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.target.getAttribute('data-id');
+                        if(confirm("Remove this person from the team roster permanently?")) {
+                            remove(ref(db, `team_roster/${id}`));
+                        }
+                    });
+                });
+            } else {
+                playerSelect.innerHTML = '<option value="">-- Ask Admin to add names --</option>';
+                editList.innerHTML = '<p style="text-align:center; color:#888;">No team members added yet.</p>';
+            }
+        });
+
+        // 2. Listen for General Settings (Code & Motion)
+        onValue(ref(db, 'settings'), (snapshot) => {
+            if(snapshot.exists()) {
+                const settings = snapshot.val();
+                
+                // Update Code
+                if (settings.code) {
+                    currentValidCode = settings.code;
+                    document.getElementById('adminCode').value = currentValidCode;
+                }
+
+                // Update Motion Banner
+                const motionBanner = document.getElementById('motionDisplayArea');
+                if (settings.motion && settings.motion.trim() !== "") {
+                    motionBanner.textContent = "Motion: " + settings.motion;
+                    motionBanner.classList.remove('hidden');
+                    document.getElementById('adminMotion').value = settings.motion;
+                } else {
+                    motionBanner.classList.add('hidden');
+                    document.getElementById('adminMotion').value = "";
+                }
+
+                // Update Draw Display
+                const drawArea = document.getElementById('roundDisplayArea');
+                if(settings.draw && settings.draw.trim() !== "") {
+                    drawArea.textContent = settings.draw;
+                    drawArea.classList.remove('hidden');
+                    document.getElementById('roundSetup').value = settings.draw;
+                } else {
+                    drawArea.classList.add('hidden');
+                    document.getElementById('roundSetup').value = "";
                 }
             }
         });
 
-        // --- NEW: AUTO-PAIRING ALGORITHM ---
-        document.getElementById('autoPairBtn').addEventListener('click', () => {
-            if (!currentRosterData) {
-                return alert("No one is checked in yet!");
+        // 3. Listen for Live Attendance
+        onValue(ref(db, 'attendance'), (snapshot) => {
+            const list = document.getElementById('attendanceList');
+            const emptyState = document.getElementById('emptyAttendance');
+            list.innerHTML = '';
+            currentAttendanceData = snapshot.val();
+            
+            if(currentAttendanceData) {
+                emptyState.style.display = 'none';
+                for (let key in currentAttendanceData) {
+                    const entry = currentAttendanceData[key];
+                    const li = document.createElement('li');
+                    
+                    // Color code roles
+                    let roleColor = entry.role === 'judge' ? '#28a745' : (entry.role === 'debater' ? '#007bff' : '#6c757d');
+                    
+                    li.innerHTML = `
+                        <div>
+                            <strong>${entry.name}</strong> 
+                            ${entry.partner && entry.partner !== "None" ? `<br><small style="color: #666;">Partnering with: ${entry.partner}</small>` : ''}
+                        </div>
+                        <span style="background: ${roleColor}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">
+                            ${entry.role.toUpperCase()}
+                        </span>
+                    `;
+                    list.appendChild(li);
+                }
+            } else {
+                emptyState.style.display = 'block';
             }
+        });
+
+        // --- ADMIN CONTROLS ---
+        
+        // Add new team member to roster
+        document.getElementById('addMemberBtn').addEventListener('click', () => {
+            const nameInput = document.getElementById('newMemberName');
+            const name = nameInput.value.trim();
+            if (name) {
+                push(ref(db, 'team_roster'), name).then(() => { nameInput.value = ""; });
+            }
+        });
+
+        // Set variables
+        document.getElementById('updateCodeBtn').addEventListener('click', () => {
+            set(ref(db, 'settings/code'), document.getElementById('adminCode').value).then(() => alert("Code updated!"));
+        });
+        document.getElementById('updateMotionBtn').addEventListener('click', () => {
+            set(ref(db, 'settings/motion'), document.getElementById('adminMotion').value).then(() => alert("Motion updated!"));
+        });
+        document.getElementById('launchRoundBtn').addEventListener('click', () => {
+            set(ref(db, 'settings/draw'), document.getElementById('roundSetup').value).then(() => alert("Draw launched!"));
+        });
+        document.getElementById('hideRoundBtn').addEventListener('click', () => {
+            set(ref(db, 'settings/draw'), null);
+        });
+        document.getElementById('clearRosterBtn').addEventListener('click', () => {
+            if(confirm("Are you sure? This deletes the current attendance and hides the draw.")) {
+                remove(ref(db, 'attendance'));
+                set(ref(db, 'settings/draw'), null);
+                set(ref(db, 'settings/motion'), null);
+            }
+        });
+
+        // --- AUTO-PAIRING ALGORITHM ---
+        document.getElementById('autoPairBtn').addEventListener('click', () => {
+            if (!currentAttendanceData) return alert("No one is checked in yet!");
 
             let debaters = [];
             let judges = [];
 
-            // 1. Sort into roles
-            for (let key in currentRosterData) {
-                let p = currentRosterData[key];
+            for (let key in currentAttendanceData) {
+                let p = currentAttendanceData[key];
                 if (p.role === 'judge') judges.push(p.name);
                 else if (p.role === 'debater') debaters.push(p);
             }
 
-            // Shuffle them so the draw is random
             debaters = debaters.sort(() => Math.random() - 0.5);
             judges = judges.sort(() => Math.random() - 0.5);
 
@@ -259,107 +380,85 @@
             let singles = [];
             let matched = new Set();
 
-            // 2. Form preset partner teams
+            // Match declared partners
             debaters.forEach(d => {
                 if (matched.has(d.name)) return;
-                
                 if (d.partner && d.partner !== "None" && d.partner !== "") {
-                    // Did their partner actually check in?
                     let p2 = debaters.find(x => x.name === d.partner);
                     if (p2 && !matched.has(p2.name)) {
                         teams.push(`${d.name} & ${p2.name}`);
-                        matched.add(d.name);
-                        matched.add(p2.name);
-                    } else {
-                        singles.push(d.name); // Partner missing, treat as single
-                    }
-                } else {
-                    singles.push(d.name); // Checked in as needing partner
-                }
+                        matched.add(d.name); matched.add(p2.name);
+                    } else { singles.push(d.name); }
+                } else { singles.push(d.name); }
             });
 
-            // 3. Pair up the remaining singles randomly
+            // Match remaining singles
             for (let i = 0; i < singles.length; i += 2) {
-                if (i + 1 < singles.length) {
-                    teams.push(`${singles[i]} & ${singles[i+1]}`);
-                } else {
-                    teams.push(`${singles[i]} (Ironperson)`);
-                }
+                if (i + 1 < singles.length) teams.push(`${singles[i]} & ${singles[i+1]}`);
+                else teams.push(`${singles[i]} (Ironperson)`);
             }
 
-            // 4. Build BP Rooms
             let numRooms = Math.floor(teams.length / 4);
             let drawText = "";
 
-            if (numRooms === 0) {
-                alert("Not enough debaters for a full room. You need at least 8 debaters (4 teams).");
-                return;
-            }
+            if (numRooms === 0) return alert("Not enough debaters for a full room. You need at least 4 teams (8 people).");
 
             for (let r = 0; r < numRooms; r++) {
                 drawText += `=== ROOM ${r + 1} ===\n`;
-                drawText += `OG: ${teams[r * 4]}\n`;
-                drawText += `OO: ${teams[r * 4 + 1]}\n`;
-                drawText += `CG: ${teams[r * 4 + 2]}\n`;
-                drawText += `CO: ${teams[r * 4 + 3]}\n`;
+                drawText += `OG: ${teams[r * 4]}\nOO: ${teams[r * 4 + 1]}\nCG: ${teams[r * 4 + 2]}\nCO: ${teams[r * 4 + 3]}\n`;
                 drawText += `Judge(s): ${judges[r] || "NONE (Need Judge!)"}\n\n`;
             }
 
-            // 5. Flag Leftovers
             let extraTeams = teams.slice(numRooms * 4);
             let extraJudges = judges.slice(numRooms);
 
             if (extraTeams.length > 0 || extraJudges.length > 0) {
                 drawText += `=== UNALLOCATED / SWINGS ===\n`;
                 if (extraTeams.length > 0) drawText += `Teams: ${extraTeams.join(', ')}\n`;
-                if (extraJudges.length > 0) drawText += `Extra Judges: ${extraJudges.join(', ')}\n`;
+                if (extraJudges.length > 0) drawText += `Judges: ${extraJudges.join(', ')}\n`;
             }
 
-            // Populate the text box so the Admin can review it
             document.getElementById('roundSetup').value = drawText;
         });
 
-        // --- ADMIN DATABASE WRITES ---
-        document.getElementById('updateCodeBtn').addEventListener('click', () => {
-            set(ref(db, 'settings/code'), document.getElementById('adminCode').value).then(() => alert("Code updated!"));
-        });
-
-        document.getElementById('launchRoundBtn').addEventListener('click', () => {
-            set(ref(db, 'settings/draw'), document.getElementById('roundSetup').value).then(() => alert("Draw launched!"));
-        });
-
-        document.getElementById('hideRoundBtn').addEventListener('click', () => {
-            set(ref(db, 'settings/draw'), null);
-        });
-
-        document.getElementById('clearRosterBtn').addEventListener('click', () => {
-            if(confirm("Clear the entire check-in roster?")) remove(ref(db, 'roster'));
-        });
-
-        // --- USER FORM LOGIC ---
+        // --- CHECK-IN FORM LOGIC ---
+        const roleSelect = document.getElementById('role');
+        const partnerSec = document.getElementById('partnerSection');
+        const partnerStatus = document.getElementById('partnerStatus');
+        const partnerNameSec = document.getElementById('partnerNameSection');
+        
         roleSelect.addEventListener('change', (e) => {
-            if (e.target.value === 'debater') { partnerSection.classList.remove('hidden'); } 
-            else { partnerSection.classList.add('hidden'); partnerNameSection.classList.add('hidden'); partnerStatus.value = "need_partner"; }
+            if (e.target.value === 'debater') { partnerSec.classList.remove('hidden'); } 
+            else { partnerSec.classList.add('hidden'); partnerNameSec.classList.add('hidden'); partnerStatus.value = "need_partner"; }
         });
 
         partnerStatus.addEventListener('change', (e) => {
-            if (e.target.value === 'have_partner') { partnerNameSection.classList.remove('hidden'); } 
-            else { partnerNameSection.classList.add('hidden'); partnerNameSelect.value = ''; }
+            if (e.target.value === 'have_partner') { partnerNameSec.classList.remove('hidden'); } 
+            else { partnerNameSec.classList.add('hidden'); document.getElementById('partnerName').value = ''; }
         });
 
-        checkInForm.addEventListener('submit', (e) => {
+        document.getElementById('checkInForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            if (document.getElementById('roomCode').value !== currentValidCode) { return showMessage("Invalid code.", true); }
-            const name = playerNameSelect.value;
-            const partner = partnerNameSelect.value;
-            if (name === partner && partner !== "") { return showMessage("Cannot partner with yourself!", true); }
+            if (document.getElementById('roomCode').value.toUpperCase() !== currentValidCode.toUpperCase()) { 
+                return showMessage("Invalid attendance code.", true); 
+            }
+            
+            const name = document.getElementById('playerName').value;
+            const partner = document.getElementById('partnerName').value;
+            
+            if (!name) return showMessage("Please select your name.", true);
+            if (name === partner && partner !== "") return showMessage("You cannot partner with yourself!", true);
 
-            push(ref(db, 'roster'), { name: name, role: roleSelect.value, partner: partner || null })
-                .then(() => {
-                    showMessage("Checked in successfully!", false);
-                    checkInForm.reset();
-                    partnerSection.classList.add('hidden'); partnerNameSection.classList.add('hidden');
-                }).catch(() => showMessage("Error checking in.", true));
+            push(ref(db, 'attendance'), { 
+                name: name, 
+                role: roleSelect.value, 
+                partner: partner || null,
+                timestamp: Date.now()
+            }).then(() => {
+                showMessage("Checked in successfully! You can view the Live Attendance tab.", false);
+                document.getElementById('checkInForm').reset();
+                partnerSec.classList.add('hidden'); partnerNameSec.classList.add('hidden');
+            }).catch(() => showMessage("Error checking in. Please try again.", true));
         });
     </script>
 </body>
